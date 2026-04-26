@@ -71,6 +71,38 @@ namespace ChessPositionCalculator
             return result;
         }
 
+        /// <summary>
+        /// Builds a lookup array indexed by the encoded pawn distribution.
+        /// Only positions with 0-6 pawns per file and ≤ 8 total are populated;
+        /// all other indices hold -1.
+        /// </summary>
+        public static int[] BuildLookup()
+        {
+            int[] lookup = new int[1 << 24];
+            for ( int i = 0; i < lookup.Length; i++ )
+                lookup[i] = -1;
+
+            FillLookup( lookup, new int[8], file: 0, total: 0 );
+            return lookup;
+        }
+
+        private static void FillLookup( int[] lookup, int[] counts, int file, int total )
+        {
+            if ( file == 8 )
+            {
+                lookup[Encode( counts )] = MinCaptures( counts );
+                return;
+            }
+
+            int max = Math.Min( 6, 8 - total );
+            for ( int c = 0; c <= max; c++ )
+            {
+                counts[file] = c;
+                FillLookup( lookup, counts, file + 1, total + c );
+            }
+            counts[file] = 0;
+        }
+
         // Layout: bits [i*3 .. i*3+2] hold the pawn count (0-7) for file i.
         // 8 files × 3 bits = 24 bits, always fits in a non-negative int.
 
