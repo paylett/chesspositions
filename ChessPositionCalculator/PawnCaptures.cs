@@ -71,6 +71,33 @@ namespace ChessPositionCalculator
             return result;
         }
 
+        // Layout: bits [i*3 .. i*3+2] hold the pawn count (0-7) for file i.
+        // 8 files × 3 bits = 24 bits, always fits in a non-negative int.
+
+        public static int Encode( int[] whitePawnCount )
+        {
+            if ( whitePawnCount.Length != 8 )
+                throw new ArgumentException( "Expected exactly 8 files." );
+
+            int encoded = 0;
+            for ( int i = 0; i < 8; i++ )
+            {
+                if ( whitePawnCount[i] < 0 || whitePawnCount[i] > 7 )
+                    throw new ArgumentOutOfRangeException( $"File {i} count must be 0-7." );
+
+                encoded |= whitePawnCount[i] << ( i * 3 );
+            }
+            return encoded;
+        }
+
+        public static int[] Decode( int encoded )
+        {
+            int[] counts = new int[8];
+            for ( int i = 0; i < 8; i++ )
+                counts[i] = ( encoded >> ( i * 3 ) ) & 0b111;
+            return counts;
+        }
+
         private static IEnumerable<(int index, T value)> Enumerate<T>( T[] array )
         {
             for ( int i = 0; i < array.Length; i++ )
