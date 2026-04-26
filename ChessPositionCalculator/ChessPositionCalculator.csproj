@@ -44,6 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Maths.cs" />
+    <Compile Include="PawnCaptures.cs" />
+    <Compile Include="PawnCapturesTests.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
